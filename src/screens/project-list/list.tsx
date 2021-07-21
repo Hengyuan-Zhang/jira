@@ -1,10 +1,12 @@
 import { render } from "@testing-library/react";
 import { Dropdown, Menu, Table, TableProps } from "antd";
 import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { ButtonNoPadding } from "../../components/lib";
 import { Pin } from "../../components/pin";
 import { useEditProject } from "../../utils/project";
+import { projectListActions } from "./project-list.slice";
 import { User } from "./serach-panel";
 
 export interface Project {
@@ -22,7 +24,7 @@ interface ListProps extends TableProps<Project> {
   projectButton: JSX.Element
 }
 export const List = ({ users, ...props }: ListProps) => {
-
+  const dispatch = useDispatch()
   const { mutate } = useEditProject()
   // 柯里化
   const pinProject = (id:number) => (pin:boolean) => mutate({id, pin}).then(props.refresh)
@@ -76,7 +78,12 @@ export const List = ({ users, ...props }: ListProps) => {
           render(value, project){
             return <Dropdown overlay={<Menu>
               <Menu.Item key={'edit'}>
-                {props.projectButton}
+                <ButtonNoPadding 
+                  type={'link'}
+                  onClick={()=> dispatch(projectListActions.openProjectModal())}
+                >
+                  编辑
+                </ButtonNoPadding>
               </Menu.Item>
             </Menu>}>
               <ButtonNoPadding type={'link'}>...</ButtonNoPadding>
